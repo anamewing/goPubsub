@@ -15,6 +15,13 @@ type Subscriber interface {
 	Notify(event Event) error
 }
 
+func NewPubsub() *Pubsub {
+	p := &Pubsub{
+		subscriberMap: make(map[string]([]Subscriber)),
+	}
+	return p
+}
+
 func (p *Pubsub) Publish(eventType string, event Event) error {
 	for _, subscriber := range p.subscriberMap[eventType] {
 		subscriber.Notify(event)
