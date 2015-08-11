@@ -24,9 +24,9 @@ func NewPubsub() *Pubsub {
 
 func (p *Pubsub) Publish(eventType string, event Event) error {
 	for _, subscriber := range p.subscriberMap[eventType] {
-		go func() {
+		go func(subscriber Subscriber) {
 			subscriber.Notify(event)
-		}()
+		}(subscriber)
 	}
 	return nil
 }
