@@ -1,6 +1,7 @@
 package pubsub
 
 type Pubsub struct {
+	subscriberMap map[string]([]Subscriber)
 }
 
 type Event interface{}
@@ -12,4 +13,23 @@ type MessageQueue interface {
 
 type Subscriber interface {
 	Notify(event Event) error
+}
+
+func NewPubsub() *Pubsub {
+	p := &Pubsub{
+		subscriberMap: make(map[string]([]Subscriber)),
+	}
+	return p
+}
+
+func (p *Pubsub) Publish(eventType string, event Event) error {
+	for _, subscriber := range p.subscriberMap[eventType] {
+		subscriber.Notify(event)
+	}
+	return nil
+}
+
+func (p *Pubsub) Subscribe(eventType string, subscriber Subscriber) error {
+	p.subscriberMap[eventType] = append(p.subscriberMap[eventType], subscriber)
+	return nil
 }
